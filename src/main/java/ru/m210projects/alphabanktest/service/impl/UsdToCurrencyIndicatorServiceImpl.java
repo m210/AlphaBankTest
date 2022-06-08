@@ -1,10 +1,8 @@
 package ru.m210projects.alphabanktest.service.impl;
 
-import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import ru.m210projects.alphabanktest.entity.GifData;
 import ru.m210projects.alphabanktest.service.ExchangeRateService;
 import ru.m210projects.alphabanktest.service.GifSearchService;
 import ru.m210projects.alphabanktest.service.UsdToCurrencyIndicatorService;
@@ -24,7 +22,7 @@ public class UsdToCurrencyIndicatorServiceImpl implements UsdToCurrencyIndicator
     }
 
     @Override
-    public GifData compare(LocalDate date, String currency) throws ParseException {
+    public byte[] compare(LocalDate date, String currency) {
         logger.info("Compare USD with {} on {}", currency.toUpperCase(), date);
         double todayRate = exchangeService.getHistoricalRate(LocalDate.now(), currency);
         double targetRate = exchangeService.getHistoricalRate(date, currency);
@@ -33,10 +31,10 @@ public class UsdToCurrencyIndicatorServiceImpl implements UsdToCurrencyIndicator
         logger.debug("Target rate is {}", targetRate);
 
         if (todayRate > targetRate) {
-            return gifSearchService.findRichGif();
+            return gifSearchService.findGif("rich");
         }
 
-        return gifSearchService.findBrokeGif();
+        return gifSearchService.findGif("broke");
     }
 
 }

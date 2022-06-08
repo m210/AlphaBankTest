@@ -1,11 +1,9 @@
 package ru.m210projects.alphabanktest.service.impl;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.m210projects.alphabanktest.client.OpenExchangeClient;
+import ru.m210projects.alphabanktest.entity.ExchangeApiResult;
 import ru.m210projects.alphabanktest.service.ExchangeRateService;
 
 import java.time.LocalDate;
@@ -30,18 +28,11 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     }
 
     @Override
-    public Double getHistoricalRate(LocalDate date, String currency) throws ParseException {
-        JSONObject rates = getCurrencyRates(client.historical(date.format(DateTimeFormatter.ofPattern(timeFormat)),
+    public Double getHistoricalRate(LocalDate date, String currency) {
+    	ExchangeApiResult result = client.historical(date.format(DateTimeFormatter.ofPattern(timeFormat)),
                 appid,
-                base));
+                base);
 
-        return (Double) rates.get(currency.toUpperCase());
-    }
-
-    private JSONObject getCurrencyRates(String json) throws ParseException {
-        JSONParser jsonParser = new JSONParser();
-
-        JSONObject jsonObject = (JSONObject) jsonParser.parse(json);
-        return (JSONObject) jsonObject.get("rates");
+        return result.getRates().get(currency.toUpperCase());
     }
 }
